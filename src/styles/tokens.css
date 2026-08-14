@@ -1,0 +1,50 @@
+:root {
+  /* Dense Technical Blueprint Theme */
+  --bg-app: #080c14;
+  --bg-surface: #0f172a;
+  --bg-surface-elevated: #1e293b;
+  --bg-surface-hover: #334155;
+  --bg-card: #0d1527;
+  --border-subtle: #1e293b;
+  --border-strong: #334155;
+  --border-active: #38bdf8;
+
+  /* Typography */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Domain Color Badges (Dense Reference Map Palette) */
+  --domain-linux: #f97316;       /* Warm Orange */
+  --domain-linux-bg: rgba(249, 115, 22, 0.12);
+  --domain-networking: #0ea5e9;  /* Bright Blue / Cisco Cyan */
+  --domain-networking-bg: rgba(14, 165, 233, 0.12);
+  --domain-cybersecurity: #ef4444; /* Alert Red / Security Crimson */
+  --domain-cybersecurity-bg: rgba(239, 68, 68, 0.12);
+  --domain-azure: #3b82f6;       /* Microsoft Azure Royal Blue */
+  --domain-azure-bg: rgba(59, 130, 246, 0.12);
+  --domain-cloud: #eab308;       /* AWS/Cloud Amber */
+  --domain-cloud-bg: rgba(234, 179, 8, 0.12);
+  --domain-aiml: #10b981;        /* AI Emerald / Mint */
+  --domain-aiml-bg: rgba(16, 185, 129, 0.12);
+
+  /* Level Indicators */
+  --level-entry: #64748b;
+  --level-associate: #0284c7;
+  --level-professional: #7c3aed;
+  --level-expert: #d97706;
+  --level-specialty: #059669;
+
+  /* Score Heatmap */
+  --score-tier-high: #10b981;
+  --score-tier-mid: #38bdf8;
+  --score-tier-low: #f59e0b;
+
+  /* Spacing & Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}

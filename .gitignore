@@ -1,0 +1,32 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Next.js build output
+/.next/
+/out/
+
+# Production
+/build
+
+# Environment variables
+.env*.local
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database / SQLite scratch
+*.db
+*.db-journal
+
+# OS files
+.DS_Store
+*.pem
+
+# IDE / Antigravity scratch
+.idea/
+.vscode/

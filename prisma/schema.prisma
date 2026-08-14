@@ -1,0 +1,244 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ExamFormat {
+  MULTIPLE_CHOICE
+  PERFORMANCE_BASED
+  HANDS_ON_LAB
+  MIXED
+  ORAL_DEFENSE
+}
+
+enum EntityStatus {
+  ACTIVE
+  RETIRED
+  BEING_REPLACED
+}
+
+enum CertLevel {
+  ENTRY
+  ASSOCIATE
+  PROFESSIONAL
+  EXPERT
+  SPECIALTY
+}
+
+enum LogicType {
+  AND
+  OR
+}
+
+enum MemberType {
+  EXAM
+  CERTIFICATION
+  EXPERIENCE
+  DEGREE
+  OTHER_CREDENTIAL
+}
+
+enum EdgeType {
+  REQUIRED
+  RECOMMENDED
+  ALTERNATIVE
+}
+
+enum SourceType {
+  VENDOR_PAGE
+  SALARY_SURVEY
+  JOB_POSTINGS_INDEX
+  COMMUNITY_AGGREGATE
+  OTHER
+}
+
+enum EntityType {
+  CERTIFICATION
+  EXAM
+}
+
+model Vendor {
+  id            String          @id
+  name          String
+  shortName     String
+  websiteUrl    String
+  logoAssetRef  String
+  description   String          @db.Text
+  foundedYear   Int?
+  notes         String?         @db.Text
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  certifications Certification[]
+  exams          Exam[]
+
+  @@map("vendors")
+}
+
+model Domain {
+  id          String                @id
+  name        String
+  description String                @db.Text
+  isEmerging  Boolean               @default(false)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  certifications CertificationDomain[]
+
+  @@map("domains")
+}
+
+model Exam {
+  id                     String         @id
+  vendorId               String
+  vendor                 Vendor         @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  examCode               String
+  name                   String
+  format                 ExamFormat     @default(MULTIPLE_CHOICE)
+  costAmountUsd          Decimal        @db.Decimal(10, 2)
+  costAmountCadOverride  Decimal?       @db.Decimal(10, 2)
+  durationMinutes        Int
+  questionCountMin       Int?
+  questionCountMax       Int?
+  passingScoreInfo       String?
+  status                 EntityStatus   @default(ACTIVE)
+  costLastVerifiedDate   DateTime       @default(now())
+  statusLastVerifiedDate DateTime       @default(now())
+  officialUrl            String
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+
+  prerequisiteMembers PrerequisiteGroupMember[]
+
+  @@map("exams")
+}
+
+model Certification {
+  id                      String         @id
+  vendorId                String
+  vendor                  Vendor         @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  name                    String
+  acronym                 String
+  level                   CertLevel
+  vendorLevelLabel        String?
+  status                  EntityStatus   @default(ACTIVE)
+  statusNotes             String?        @db.Text
+  renewalPeriodMonths     Int            @default(36)
+  renewalRequirementsText String?        @db.Text
+  description             String         @db.Text
+  officialUrl             String
+  computedScore           Decimal?       @db.Decimal(5, 2)
+  scoreBreakdown          Json?
+  statusLastVerifiedDate  DateTime       @default(now())
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+
+  domains                 CertificationDomain[]
+  roles                   CertificationRole[]
+  prerequisiteGroups      PrerequisiteGroup[]       @relation("TargetCertGroups")
+  asPrerequisiteMember    PrerequisiteGroupMember[]
+
+  @@map("certifications")
+}
+
+model CertificationDomain {
+  certificationId String
+  domainId        String
+  certification   Certification @relation(fields: [certificationId], references: [id], onDelete: Cascade)
+  domain          Domain        @relation(fields: [domainId], references: [id], onDelete: Cascade)
+
+  @@id([certificationId, domainId])
+  @@map("certification_domains")
+}
+
+model Role {
+  id          String              @id
+  name        String
+  description String              @db.Text
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  certifications CertificationRole[]
+
+  @@map("roles")
+}
+
+model CertificationRole {
+  certificationId String
+  roleId          String
+  certification   Certification @relation(fields: [certificationId], references: [id], onDelete: Cascade)
+  role            Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([certificationId, roleId])
+  @@map("certification_roles")
+}
+
+model PrerequisiteGroup {
+  id                    String                    @id
+  targetCertificationId String
+  targetCertification   Certification             @relation("TargetCertGroups", fields: [targetCertificationId], references: [id], onDelete: Cascade)
+  parentGroupId         String?
+  parentGroup           PrerequisiteGroup?        @relation("NestedGroups", fields: [parentGroupId], references: [id], onDelete: Cascade)
+  childGroups           PrerequisiteGroup[]       @relation("NestedGroups")
+  logicType             LogicType                 @default(AND)
+  groupLabel            String?
+  minRequired           Int                       @default(1)
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+
+  members               PrerequisiteGroupMember[]
+
+  @@map("prerequisite_groups")
+}
+
+model PrerequisiteGroupMember {
+  id                    String            @id
+  groupId               String
+  group                 PrerequisiteGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  memberType            MemberType
+  examId                String?
+  exam                  Exam?             @relation(fields: [examId], references: [id], onDelete: SetNull)
+  certificationId       String?
+  certification         Certification?    @relation(fields: [certificationId], references: [id], onDelete: SetNull)
+  experienceDescription String?           @db.Text
+  degreeDescription     String?           @db.Text
+  edgeType              EdgeType          @default(REQUIRED)
+  notes                 String?           @db.Text
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@map("prerequisite_group_members")
+}
+
+model Source {
+  id           String        @id
+  type         SourceType    @default(VENDOR_PAGE)
+  title        String
+  url          String
+  publisher    String
+  accessedDate DateTime      @default(now())
+  notes        String?       @db.Text
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  citations    FieldSource[]
+
+  @@map("sources")
+}
+
+model FieldSource {
+  id         String     @id
+  entityType EntityType
+  entityId   String
+  fieldName  String
+  sourceId   String
+  source     Source     @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  createdAt  DateTime   @default(now())
+
+  @@index([entityType, entityId])
+  @@map("field_sources")
+}

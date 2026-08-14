@@ -6,6 +6,7 @@ import { calculateCertificationCost } from '@/lib/derived-cost';
 import { getCadExchangeRate } from '@/lib/currency';
 import { buildGraphExport } from '@/lib/graph-builder';
 import PathwayVisualizer from '@/components/graph/PathwayVisualizer';
+import VendorBadgeIcon from '@/components/common/VendorBadgeIcon';
 import {
   ExternalLink,
   Award,
@@ -147,14 +148,19 @@ export default async function VendorPage({ params }: VendorPageProps) {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div className="space-y-2 max-w-2xl">
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                  {vendor.name}
-                </h1>
-                {vendor.foundedYear && (
-                  <span className="text-xs font-mono bg-slate-800 px-2 py-0.5 rounded text-slate-400 border border-slate-700">
-                    Est. {vendor.foundedYear}
-                  </span>
-                )}
+                <VendorBadgeIcon vendorId={vendor.id} vendorName={vendor.name} size="lg" />
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                      {vendor.name}
+                    </h1>
+                    {vendor.foundedYear && (
+                      <span className="text-xs font-mono bg-slate-800 px-2 py-0.5 rounded text-slate-400 border border-slate-700">
+                        Est. {vendor.foundedYear}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
               <p className="text-sm text-slate-300 leading-relaxed">
                 {vendor.description}

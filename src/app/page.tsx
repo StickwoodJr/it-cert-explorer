@@ -5,6 +5,7 @@ import { getCadExchangeRate } from '@/lib/currency';
 import { calculateCertificationCost } from '@/lib/derived-cost';
 import { buildGraphExport } from '@/lib/graph-builder';
 import PathwayVisualizer from '@/components/graph/PathwayVisualizer';
+import VendorBadgeIcon from '@/components/common/VendorBadgeIcon';
 import {
   Layers,
   Sparkles,
@@ -211,7 +212,10 @@ export default async function HomePage() {
                           {cert.name}
                         </td>
                         <td className="py-3 px-3 text-slate-300 font-medium">
-                          {cert.vendor.shortName}
+                          <div className="flex items-center gap-1.5">
+                            <VendorBadgeIcon vendorId={cert.vendor.id} vendorName={cert.vendor.shortName} size="sm" />
+                            <span>{cert.vendor.shortName}</span>
+                          </div>
                         </td>
                         <td className="py-3 px-3">
                           <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${levelStyle.badge}`}>

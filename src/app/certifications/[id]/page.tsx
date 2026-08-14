@@ -4,6 +4,7 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import prisma from '@/lib/db';
 import { calculateCertificationCost } from '@/lib/derived-cost';
 import { getCadExchangeRate } from '@/lib/currency';
+import VendorBadgeIcon from '@/components/common/VendorBadgeIcon';
 import {
   Award,
   BookOpen,
@@ -193,12 +194,17 @@ export default async function CertificationDetailPage({ params }: CertDetailPage
                 ))}
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-                {cert.name}
-              </h1>
-              <p className="text-sm text-slate-300 max-w-3xl leading-relaxed">
-                {cert.description}
-              </p>
+              <div className="flex items-start gap-4">
+                <VendorBadgeIcon vendorId={cert.vendor.id} vendorName={cert.vendor.shortName} size="lg" className="mt-1" />
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
+                    {cert.name}
+                  </h1>
+                  <p className="text-sm text-slate-300 max-w-3xl leading-relaxed mt-2">
+                    {cert.description}
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col items-start md:items-end gap-3 shrink-0">

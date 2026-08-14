@@ -3,6 +3,7 @@
 import React, { memo } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import { Award, Shield, CheckCircle2, DollarSign, Network, Server, Cloud, Cpu, Layers } from 'lucide-react';
+import VendorBadgeIcon from '@/components/common/VendorBadgeIcon';
 
 export interface CertNodeData {
   id: string;
@@ -156,11 +157,14 @@ export const CustomCertNode = memo((props: NodeProps) => {
         <p className="text-xs text-slate-400 line-clamp-1">{nodeData?.fullName}</p>
       </div>
 
-      {/* Meta Footer (Vendor, Exam, Cost) */}
+      {/* Meta Footer (Vendor Badge, Exam, Cost) */}
       <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-        <span className="font-medium text-slate-300 truncate max-w-[90px]">
-          {nodeData?.vendorName}
-        </span>
+        <div className="flex items-center gap-1.5 truncate max-w-[120px]">
+          <VendorBadgeIcon vendorId={nodeData?.vendorId || ''} vendorName={nodeData?.vendorName || ''} size="sm" />
+          <span className="font-medium text-slate-300 truncate">
+            {nodeData?.vendorName}
+          </span>
+        </div>
         {nodeData?.examSummary && (
           <span className="font-mono text-slate-400 bg-slate-800/60 px-1.5 py-0.5 rounded text-[10px]">
             {nodeData.examSummary}

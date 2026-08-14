@@ -243,6 +243,63 @@ export default function PathwayVisualizer({
     return initialGraph.nodes.find((n) => n.id === selectedCertId) || null;
   }, [selectedCertId, initialGraph.nodes]);
 
+  // Compute active pathway (ancestors + descendants) for selected cert
+  const pathwayHighlight = useMemo(() => {
+    if (!selectedCertId) {
+      return {
+        activeNodeIds: new Set<string>(),
+        ancestorIds: new Set<string>(),
+        descendantIds: new Set<string>(),
+        pathwayEdgeIds: new Set<string>(),
+        isFiltering: false,
+      };
+    }
+
+    const ancestorIds = new Set<string>();
+    const descendantIds = new Set<string>();
+    const pathwayEdgeIds = new Set<string>();
+
+    // BFS Upstream (Formal / recommended prerequisites leading into selected cert)
+    const upstreamQueue = [selectedCertId];
+    while (upstreamQueue.length > 0) {
+      const current = upstreamQueue.shift()!;
+      for (const edge of filteredGraph.edges) {
+        if (edge.target === current) {
+          pathwayEdgeIds.add(edge.id);
+          if (!ancestorIds.has(edge.source) && edge.source !== selectedCertId) {
+            ancestorIds.add(edge.source);
+            upstreamQueue.push(edge.source);
+          }
+        }
+      }
+    }
+
+    // BFS Downstream (Credentials unlocked by selected cert)
+    const downstreamQueue = [selectedCertId];
+    while (downstreamQueue.length > 0) {
+      const current = downstreamQueue.shift()!;
+      for (const edge of filteredGraph.edges) {
+        if (edge.source === current) {
+          pathwayEdgeIds.add(edge.id);
+          if (!descendantIds.has(edge.target) && edge.target !== selectedCertId) {
+            descendantIds.add(edge.target);
+            downstreamQueue.push(edge.target);
+          }
+        }
+      }
+    }
+
+    const activeNodeIds = new Set<string>([selectedCertId, ...ancestorIds, ...descendantIds]);
+
+    return {
+      activeNodeIds,
+      ancestorIds,
+      descendantIds,
+      pathwayEdgeIds,
+      isFiltering: true,
+    };
+  }, [selectedCertId, filteredGraph.edges]);
+
   // Dagre Layout computation for React Flow DAG
   const layoutedElements = useMemo(() => {
     const dagreGraph = new dagre.graphlib.Graph();
@@ -266,6 +323,11 @@ export default function PathwayVisualizer({
 
     const rfNodes: Node[] = filteredGraph.nodes.map((node) => {
       const nodeWithPosition = dagreGraph.node(node.id);
+      const isSelected = node.id === selectedCertId;
+      const isAncestor = pathwayHighlight.ancestorIds.has(node.id);
+      const isDescendant = pathwayHighlight.descendantIds.has(node.id);
+      const isDimmed = pathwayHighlight.isFiltering && !pathwayHighlight.activeNodeIds.has(node.id);
+
       return {
         id: node.id,
         type: 'certNode',
@@ -277,7 +339,10 @@ export default function PathwayVisualizer({
         data: {
           ...node,
           currency,
-          selected: node.id === selectedCertId,
+          selected: isSelected,
+          isAncestor,
+          isDescendant,
+          isDimmed,
         },
       };
     });
@@ -303,6 +368,9 @@ export default function PathwayVisualizer({
         labelBorderColor = '#d97706';
       }
 
+      const isPathwayEdge = !pathwayHighlight.isFiltering || pathwayHighlight.pathwayEdgeIds.has(edge.id);
+      const isDimmed = pathwayHighlight.isFiltering && !pathwayHighlight.pathwayEdgeIds.has(edge.id);
+
       return {
         id: edge.id,
         source: edge.source,
@@ -310,18 +378,18 @@ export default function PathwayVisualizer({
         sourceHandle: direction === 'BT' ? 'top' : 'right',
         targetHandle: direction === 'BT' ? 'bottom' : 'left',
         type: 'smoothstep',
-        animated: edge.type === 'required',
+        animated: isPathwayEdge && (edge.type === 'required' || pathwayHighlight.isFiltering),
         label: edge.label,
         labelStyle: {
-          fill: labelTextColor,
+          fill: isDimmed ? '#475569' : labelTextColor,
           fontSize: 10,
           fontWeight: 700,
           fontFamily: 'monospace',
         },
         labelBgStyle: {
           fill: '#090d16',
-          fillOpacity: 0.96,
-          stroke: labelBorderColor,
+          fillOpacity: isDimmed ? 0.4 : 0.96,
+          stroke: isDimmed ? '#1e293b' : labelBorderColor,
           strokeWidth: 1.5,
           rx: 6,
           ry: 6,
@@ -329,13 +397,14 @@ export default function PathwayVisualizer({
         labelBgPadding: [8, 5] as [number, number],
         labelBgBorderRadius: 6,
         style: {
-          stroke: strokeColor,
-          strokeWidth,
+          stroke: isDimmed ? '#1e293b' : strokeColor,
+          strokeWidth: isDimmed ? 1 : isPathwayEdge && pathwayHighlight.isFiltering ? strokeWidth + 1 : strokeWidth,
           strokeDasharray,
+          opacity: isDimmed ? 0.2 : 1.0,
         },
         markerEnd: {
           type: MarkerType.ArrowClosed,
-          color: strokeColor,
+          color: isDimmed ? '#1e293b' : strokeColor,
           width: 16,
           height: 16,
         },
@@ -343,7 +412,7 @@ export default function PathwayVisualizer({
     });
 
     return { nodes: rfNodes, edges: rfEdges };
-  }, [filteredGraph, direction, currency, selectedCertId]);
+  }, [filteredGraph, direction, currency, selectedCertId, pathwayHighlight]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(layoutedElements.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedElements.edges);
@@ -355,6 +424,29 @@ export default function PathwayVisualizer({
 
   const handleNodeClick = useCallback((_: any, node: Node) => {
     setSelectedCertId(node.id);
+  }, []);
+
+  // Global Keyboard Shortcuts
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      ) {
+        return;
+      }
+      if (e.key === '1') setViewMode('DAG');
+      if (e.key === '2') setViewMode('TIMELINE');
+      if (e.key === '3') setViewMode('FORCE');
+      if (e.key === '4') setViewMode('RADIAL');
+      if (e.key === '5') setViewMode('MATRIX');
+      if (e.key.toLowerCase() === 'f') setShowFilterSidebar((s) => !s);
+      if (e.key === 'Escape') setSelectedCertId(null);
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Force-Directed Graph D3 Renderer

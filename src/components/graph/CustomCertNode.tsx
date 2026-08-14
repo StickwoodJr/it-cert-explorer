@@ -30,6 +30,9 @@ export interface CertNodeData {
   officialUrl?: string;
   domains: string[];
   selected?: boolean;
+  isAncestor?: boolean;
+  isDescendant?: boolean;
+  isDimmed?: boolean;
 }
 
 const levelStyles: Record<string, { bg: string; text: string; border: string; glow: string; label: string }> = {
@@ -81,26 +84,45 @@ const domainStyles: Record<string, { label: string; border: string; bg: string; 
 
 export const CustomCertNode = memo((props: NodeProps) => {
   const nodeData = props.data as unknown as CertNodeData;
-  const selected = props.selected;
+  const selected = props.selected || nodeData?.selected;
   const style = levelStyles[nodeData?.level] || levelStyles.ASSOCIATE;
   const primaryDomain = nodeData?.domains?.[0] || 'domain:networking';
   const domainInfo = domainStyles[primaryDomain] || domainStyles['domain:networking'];
   const costDisplay = nodeData?.currency === 'CAD' ? nodeData?.costDisplayCad : nodeData?.costDisplayUsd;
   const isPhasingOut = nodeData?.status === 'BEING_REPLACED';
   const isRetired = nodeData?.status === 'RETIRED';
+  const isAncestor = nodeData?.isAncestor;
+  const isDescendant = nodeData?.isDescendant;
+  const isDimmed = nodeData?.isDimmed;
 
   return (
     <div
       className={`relative w-72 rounded-lg border border-l-4 bg-slate-900/98 p-3.5 shadow-xl transition-all duration-200 ${
-        isRetired
+        isDimmed
+          ? 'opacity-25 grayscale-[40%] scale-[0.98]'
+          : isRetired
           ? 'opacity-65 border-dashed border-slate-700'
           : isPhasingOut
           ? 'border-amber-500/60 border-dashed'
           : style.border
-      } ${selected ? 'ring-2 ring-sky-400 shadow-sky-950/50 scale-[1.02]' : ''}`}
+      } ${
+        selected
+          ? 'ring-2 ring-sky-400 shadow-sky-950/60 scale-[1.03] z-20'
+          : isAncestor
+          ? 'ring-2 ring-emerald-400/90 shadow-emerald-950/50 z-10 scale-[1.01]'
+          : isDescendant
+          ? 'ring-2 ring-purple-400/90 shadow-purple-950/50 z-10 scale-[1.01]'
+          : ''
+      }`}
       style={{
         borderLeftColor: isRetired ? '#64748b' : domainInfo.border,
-        boxShadow: selected ? `0 0 22px ${style.glow}` : `0 4px 14px rgba(0, 0, 0, 0.45)`,
+        boxShadow: selected
+          ? `0 0 24px ${style.glow}`
+          : isAncestor
+          ? '0 0 16px rgba(16, 185, 129, 0.25)'
+          : isDescendant
+          ? '0 0 16px rgba(168, 85, 247, 0.25)'
+          : `0 4px 14px rgba(0, 0, 0, 0.45)`,
       }}
     >
       {/* Handles for vertical ladder (Bottom-to-Top: leaves Top, arrives Bottom) */}
@@ -145,6 +167,16 @@ export const CustomCertNode = memo((props: NodeProps) => {
           >
             {style.label}
           </span>
+          {isAncestor && (
+            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-500 font-bold uppercase">
+              Required Step
+            </span>
+          )}
+          {isDescendant && (
+            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-purple-950 text-purple-300 border border-purple-500 font-bold uppercase">
+              Unlocked Next
+            </span>
+          )}
           {isPhasingOut && (
             <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-amber-950/90 text-amber-300 border border-amber-600/80 font-bold uppercase">
               Phasing Out

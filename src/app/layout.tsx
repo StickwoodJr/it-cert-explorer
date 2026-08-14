@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -27,8 +28,11 @@ export default function RootLayout({
                 All certification names, acronyms, vendor names, exam codes, and trademarks are the property of their respective owners. This site is an independent educational and technical reference platform operated under nominative fair use principles and is not affiliated with, sponsored by, or endorsed by any listed certification authority or vendor.
               </p>
             </div>
-            <div className="text-[11px] text-slate-500 shrink-0 font-mono text-right">
-              Data Grounded in Primary Documentation
+            <div className="flex flex-col sm:items-end gap-1.5 text-[11px] text-slate-500 shrink-0 font-mono">
+              <Link href="/about" className="text-sky-400 hover:text-sky-300 transition font-sans font-semibold">
+                Why this project is different →
+              </Link>
+              <span>Data Grounded in Primary Documentation</span>
             </div>
           </div>
         </footer>

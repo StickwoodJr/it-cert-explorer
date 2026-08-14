@@ -77,6 +77,15 @@ export default async function HomePage() {
               v1.0 Technical Release
             </span>
           </div>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/about"
+              className="text-xs text-slate-400 hover:text-sky-400 font-medium px-3 py-1 rounded bg-slate-900 border border-slate-800 hover:border-slate-700 transition"
+            >
+              Why this project is different →
+            </Link>
+          </div>
         </div>
       </header>
 

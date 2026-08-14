@@ -753,7 +753,7 @@ export default function PathwayVisualizer({
         ))}
       </div>
 
-      {/* Domain & Tier Visual Legend Bar */}
+      {/* Domain, Tier & Edge Visual Legend Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-1.5 bg-slate-950/80 border-b border-slate-800 text-[11px] text-slate-400">
         <div className="flex flex-wrap items-center gap-3">
           <span className="font-semibold text-slate-300">Domains:</span>
@@ -764,12 +764,26 @@ export default function PathwayVisualizer({
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#818cf8]"></span> Cloud</span>
           <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#10b981]"></span> AI / ML</span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="font-semibold text-slate-300">Tiers:</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-emerald-400"></span> Entry</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-sky-400"></span> Associate</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-400"></span> Professional</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-rose-400"></span> Expert</span>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2.5">
+            <span className="font-semibold text-slate-300">Tiers:</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-emerald-400"></span> Entry</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-sky-400"></span> Associate</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-400"></span> Professional</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-rose-400"></span> Expert</span>
+          </div>
+          <div className="flex items-center gap-2.5 border-l border-slate-800 pl-3">
+            <span className="font-semibold text-slate-300">Edge Types:</span>
+            <span className="flex items-center gap-1.5 font-mono text-[10px] text-sky-400">
+              <span className="w-3.5 h-[3px] bg-sky-500 rounded-full inline-block"></span> Required
+            </span>
+            <span className="flex items-center gap-1.5 font-mono text-[10px] text-emerald-400">
+              <span className="w-3.5 h-0 border-t-2 border-dashed border-emerald-400 inline-block"></span> Recommended
+            </span>
+            <span className="flex items-center gap-1.5 font-mono text-[10px] text-amber-400">
+              <span className="w-3.5 h-0 border-t-2 border-dotted border-amber-400 inline-block"></span> Alternative
+            </span>
+          </div>
         </div>
       </div>
 

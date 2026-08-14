@@ -182,6 +182,7 @@ export async function buildGraphExport(filters: GraphFilterOptions = {}): Promis
       vendorId: cert.vendorId,
       vendorName: cert.vendor.shortName,
       domains: cert.domains.map((d) => d.domainId),
+      roles: cert.roles.map((r) => r.roleId),
       level: cert.level,
       status: cert.status,
       score: cert.computedScore ? Number(cert.computedScore) : 0,

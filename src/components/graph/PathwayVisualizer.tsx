@@ -191,17 +191,7 @@ export default function PathwayVisualizer({
 
     // 4. Role Filter preset
     if (selectedRole !== 'ALL') {
-      // Role matching based on role preset
-      nodes = nodes.filter((n) => {
-        if (selectedRole === 'role:network-engineer') return n.domains.includes('domain:networking');
-        if (selectedRole === 'role:cloud-architect') return n.domains.includes('domain:cloud') || n.domains.includes('domain:azure');
-        if (selectedRole === 'role:soc-analyst') return n.domains.includes('domain:cybersecurity') && (n.level === 'ENTRY' || n.level === 'ASSOCIATE');
-        if (selectedRole === 'role:pentester') return n.id.includes('oscp') || n.id.includes('pentest') || n.id.includes('ceh');
-        if (selectedRole === 'role:sysadmin') return n.domains.includes('domain:linux') || n.id.includes('hybrid') || n.id.includes('network');
-        if (selectedRole === 'role:security-architect') return n.domains.includes('domain:cybersecurity') && (n.level === 'PROFESSIONAL' || n.level === 'EXPERT');
-        if (selectedRole === 'role:ml-engineer') return n.domains.includes('domain:ai-ml');
-        return true;
-      });
+      nodes = nodes.filter((n) => n.roles && n.roles.includes(selectedRole));
     }
 
     // 5. Cost Ceiling

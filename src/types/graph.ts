@@ -6,7 +6,8 @@ export interface GraphNode {
   fullName: string;
   vendorId: string;
   vendorName: string;
-  domains: string[]; // ["networking"]
+  domains: string[]; // ["domain:networking"]
+  roles: string[]; // ["role:network-engineer"]
   level: CertLevel;
   status: EntityStatus;
   score: number;

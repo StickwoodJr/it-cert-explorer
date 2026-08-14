@@ -406,8 +406,27 @@ export default function PathwayVisualizer({
       .attr('cursor', 'pointer')
       .on('click', (_, d: any) => setSelectedCertId(d.id));
 
+    // Outer domain color halo ring
     node.append('circle')
-      .attr('r', 24)
+      .attr('r', 30)
+      .attr('fill', 'none')
+      .attr('stroke', (d: any) => {
+        const dom = d.domains?.[0];
+        if (dom === 'domain:networking') return '#0284c7';
+        if (dom === 'domain:linux') return '#f59e0b';
+        if (dom === 'domain:cybersecurity') return '#f43f5e';
+        if (dom === 'domain:azure') return '#06b6d4';
+        if (dom === 'domain:cloud') return '#818cf8';
+        if (dom === 'domain:ai-ml') return '#10b981';
+        return '#0284c7';
+      })
+      .attr('stroke-width', 2)
+      .attr('stroke-dasharray', '3 3')
+      .attr('opacity', 0.85);
+
+    // Inner tier circle
+    node.append('circle')
+      .attr('r', 23)
       .attr('fill', '#0f172a')
       .attr('stroke', (d: any) => levelColors[d.level] || '#0ea5e9')
       .attr('stroke-width', (d: any) => (d.id === selectedCertId ? 4 : 2));
@@ -710,6 +729,26 @@ export default function PathwayVisualizer({
             {r.name}
           </button>
         ))}
+      </div>
+
+      {/* Domain & Tier Visual Legend Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-1.5 bg-slate-950/80 border-b border-slate-800 text-[11px] text-slate-400">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="font-semibold text-slate-300">Domains:</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#0284c7]"></span> Networking</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#f59e0b]"></span> Linux</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#f43f5e]"></span> Cybersecurity</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#06b6d4]"></span> Azure / MS</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#818cf8]"></span> Cloud</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#10b981]"></span> AI / ML</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="font-semibold text-slate-300">Tiers:</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-emerald-400"></span> Entry</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-sky-400"></span> Associate</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-400"></span> Professional</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-rose-400"></span> Expert</span>
+        </div>
       </div>
 
       {/* Main Content: Filter Sidebar + Canvas Area */}

@@ -2,7 +2,7 @@
 
 import React, { memo } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
-import { Award, Shield, CheckCircle2, DollarSign } from 'lucide-react';
+import { Award, Shield, CheckCircle2, DollarSign, Network, Server, Cloud, Cpu, Layers } from 'lucide-react';
 
 export interface CertNodeData {
   id: string;
@@ -37,7 +37,7 @@ const levelStyles: Record<string, { bg: string; text: string; border: string; gl
     text: 'text-emerald-400',
     border: 'border-emerald-500/40 hover:border-emerald-400',
     glow: 'rgba(16, 185, 129, 0.15)',
-    label: 'Entry / Foundational',
+    label: 'Entry',
   },
   ASSOCIATE: {
     bg: 'bg-sky-950/40',
@@ -58,7 +58,7 @@ const levelStyles: Record<string, { bg: string; text: string; border: string; gl
     text: 'text-rose-400',
     border: 'border-rose-500/40 hover:border-rose-400',
     glow: 'rgba(244, 63, 94, 0.15)',
-    label: 'Expert / Pinnacle',
+    label: 'Expert',
   },
   SPECIALTY: {
     bg: 'bg-indigo-950/40',
@@ -69,19 +69,31 @@ const levelStyles: Record<string, { bg: string; text: string; border: string; gl
   },
 };
 
+const domainStyles: Record<string, { label: string; border: string; bg: string; text: string; dot: string }> = {
+  'domain:networking': { label: 'Networking', border: '#0284c7', bg: 'bg-sky-950/80', text: 'text-sky-400', dot: 'bg-sky-400' },
+  'domain:linux': { label: 'Linux', border: '#f59e0b', bg: 'bg-amber-950/80', text: 'text-amber-400', dot: 'bg-amber-400' },
+  'domain:cybersecurity': { label: 'Cybersecurity', border: '#f43f5e', bg: 'bg-rose-950/80', text: 'text-rose-400', dot: 'bg-rose-400' },
+  'domain:azure': { label: 'Azure / MS', border: '#06b6d4', bg: 'bg-cyan-950/80', text: 'text-cyan-400', dot: 'bg-cyan-400' },
+  'domain:cloud': { label: 'Cloud', border: '#818cf8', bg: 'bg-indigo-950/80', text: 'text-indigo-400', dot: 'bg-indigo-400' },
+  'domain:ai-ml': { label: 'AI / ML', border: '#10b981', bg: 'bg-emerald-950/80', text: 'text-emerald-400', dot: 'bg-emerald-400' },
+};
+
 export const CustomCertNode = memo((props: NodeProps) => {
   const nodeData = props.data as unknown as CertNodeData;
   const selected = props.selected;
   const style = levelStyles[nodeData?.level] || levelStyles.ASSOCIATE;
+  const primaryDomain = nodeData?.domains?.[0] || 'domain:networking';
+  const domainInfo = domainStyles[primaryDomain] || domainStyles['domain:networking'];
   const costDisplay = nodeData?.currency === 'CAD' ? nodeData?.costDisplayCad : nodeData?.costDisplayUsd;
 
   return (
     <div
-      className={`relative w-72 rounded-lg border bg-slate-900/95 p-3.5 shadow-lg transition-all duration-200 ${style.border} ${
+      className={`relative w-72 rounded-lg border border-l-4 bg-slate-900/98 p-3.5 shadow-xl transition-all duration-200 ${style.border} ${
         selected ? 'ring-2 ring-sky-400 shadow-sky-950/50 scale-[1.02]' : ''
       }`}
       style={{
-        boxShadow: selected ? `0 0 20px ${style.glow}` : `0 4px 12px rgba(0, 0, 0, 0.4)`,
+        borderLeftColor: domainInfo.border,
+        boxShadow: selected ? `0 0 22px ${style.glow}` : `0 4px 14px rgba(0, 0, 0, 0.45)`,
       }}
     >
       {/* Handles for vertical ladder (Bottom-to-Top: leaves Top, arrives Bottom) */}
@@ -112,16 +124,25 @@ export const CustomCertNode = memo((props: NodeProps) => {
         className="!w-3 !h-3 !bg-slate-600 !border-2 !border-slate-300 hover:!bg-sky-400"
       />
 
-      {/* Header with Level & Score */}
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span
-          className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide uppercase ${style.bg} ${style.text} border border-current/20`}
-        >
-          {nodeData?.level}
-        </span>
-        <div className="flex items-center gap-1.5 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">
-          <Award className="w-3.5 h-3.5 text-amber-400" />
-          <span className="text-xs font-mono font-bold text-slate-200">
+      {/* Header with Domain Badge, Level & Score */}
+      <div className="flex items-center justify-between gap-1.5 mb-2">
+        <div className="flex items-center gap-1.5">
+          <span
+            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold tracking-tight uppercase ${domainInfo.bg} ${domainInfo.text} border border-current/20`}
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${domainInfo.dot}`} />
+            {domainInfo.label}
+          </span>
+          <span
+            className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide uppercase ${style.bg} ${style.text} border border-current/20`}
+          >
+            {style.label}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800 shrink-0">
+          <Award className="w-3 h-3 text-amber-400" />
+          <span className="text-[11px] font-mono font-bold text-slate-200">
             {nodeData?.score != null ? nodeData.score.toFixed(1) : '0.0'}
           </span>
         </div>

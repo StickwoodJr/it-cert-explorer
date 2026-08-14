@@ -279,6 +279,7 @@ export default function PathwayVisualizer({
       return {
         id: node.id,
         type: 'certNode',
+        draggable: false,
         position: {
           x: nodeWithPosition ? nodeWithPosition.x - 145 : 0,
           y: nodeWithPosition ? nodeWithPosition.y - 65 : 0,
@@ -403,24 +404,7 @@ export default function PathwayVisualizer({
       .enter()
       .append('g')
       .attr('cursor', 'pointer')
-      .on('click', (_, d: any) => setSelectedCertId(d.id))
-      .call(
-        d3.drag<any, any>()
-          .on('start', (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          })
-          .on('drag', (event, d) => {
-            d.fx = event.x;
-            d.fy = event.y;
-          })
-          .on('end', (event, d) => {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-          })
-      );
+      .on('click', (_, d: any) => setSelectedCertId(d.id));
 
     node.append('circle')
       .attr('r', 24)
@@ -898,6 +882,11 @@ export default function PathwayVisualizer({
               onEdgesChange={onEdgesChange}
               onNodeClick={handleNodeClick}
               nodeTypes={nodeTypes}
+              nodesDraggable={false}
+              nodesConnectable={false}
+              elementsSelectable={true}
+              panOnDrag={true}
+              zoomOnScroll={true}
               fitView
               minZoom={0.2}
               maxZoom={2}

@@ -84,19 +84,21 @@ export const CustomCertNode = memo((props: NodeProps) => {
         boxShadow: selected ? `0 0 20px ${style.glow}` : `0 4px 12px rgba(0, 0, 0, 0.4)`,
       }}
     >
-      {/* Handles for vertical DAG */}
+      {/* Handles for vertical ladder (Bottom-to-Top: leaves Top, arrives Bottom) */}
       <Handle
-        type="target"
+        type="source"
         position={Position.Top}
+        id="top"
         className="!w-3 !h-3 !bg-slate-600 !border-2 !border-slate-300 hover:!bg-sky-400"
       />
       <Handle
-        type="source"
+        type="target"
         position={Position.Bottom}
+        id="bottom"
         className="!w-3 !h-3 !bg-slate-600 !border-2 !border-slate-300 hover:!bg-sky-400"
       />
 
-      {/* Handles for horizontal DAG */}
+      {/* Handles for horizontal ladder (Left-to-Right: leaves Right, arrives Left) */}
       <Handle
         type="target"
         position={Position.Left}

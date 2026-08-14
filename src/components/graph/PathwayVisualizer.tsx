@@ -118,7 +118,7 @@ export default function PathwayVisualizer({
 }: PathwayVisualizerProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('DAG');
   const [currency, setCurrency] = useState<'USD' | 'CAD'>('USD');
-  const [direction, setDirection] = useState<'TB' | 'LR'>('TB');
+  const [direction, setDirection] = useState<'BT' | 'LR'>('BT');
   const [selectedCertId, setSelectedCertId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [showFilterSidebar, setShowFilterSidebar] = useState<boolean>(!vendorFilter);
@@ -307,6 +307,8 @@ export default function PathwayVisualizer({
         id: edge.id,
         source: edge.source,
         target: edge.target,
+        sourceHandle: direction === 'BT' ? 'top' : 'right',
+        targetHandle: direction === 'BT' ? 'bottom' : 'left',
         type: 'smoothstep',
         animated: edge.type === 'required',
         label: edge.label,
@@ -654,11 +656,11 @@ export default function PathwayVisualizer({
 
           {viewMode === 'DAG' && (
             <button
-              onClick={() => setDirection((d) => (d === 'TB' ? 'LR' : 'TB'))}
+              onClick={() => setDirection((d) => (d === 'BT' ? 'LR' : 'BT'))}
               className="px-2.5 py-1 text-xs font-mono bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 text-slate-300 transition"
-              title="Toggle graph orientation (Vertical / Horizontal)"
+              title="Toggle ladder orientation (Vertical Ladder ↑ / Horizontal Flow →)"
             >
-              {direction === 'TB' ? 'Vertical ↓' : 'Horizontal →'}
+              {direction === 'BT' ? 'Vertical Ladder ↑' : 'Horizontal Flow →'}
             </button>
           )}
 

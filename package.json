@@ -12,6 +12,7 @@
     "db:generate": "prisma generate",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "prisma studio",
+    "audit:sources": "npx tsx scripts/audit-verification.ts",
     "test": "vitest run"
   },
   "dependencies": {

@@ -263,7 +263,12 @@ export default async function VendorPage({ params }: VendorPageProps) {
                     <tr key={cert.id} className="hover:bg-slate-800/40 transition">
                       {/* Name & Acronym */}
                       <td className="py-3.5 px-4">
-                        <div className="font-bold text-slate-100">{cert.name}</div>
+                        <Link
+                          href={`/certifications/${cert.id.replace('cert:', '')}`}
+                          className="font-bold text-slate-100 hover:text-sky-400 transition block"
+                        >
+                          {cert.name}
+                        </Link>
                         <div className="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
                           <span className="font-mono text-sky-400 font-semibold">{cert.acronym}</span>
                           <span>•</span>
@@ -311,15 +316,22 @@ export default async function VendorPage({ params }: VendorPageProps) {
 
                       {/* Action */}
                       <td className="py-3.5 px-4 text-right">
-                        <a
-                          href={cert.officialUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-sky-400 hover:text-sky-300 font-semibold text-xs transition"
-                        >
-                          Official
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/certifications/${cert.id.replace('cert:', '')}`}
+                            className="px-2.5 py-1 bg-sky-950 hover:bg-sky-900 border border-sky-700/60 text-sky-400 rounded text-xs font-semibold transition"
+                          >
+                            Details
+                          </Link>
+                          <a
+                            href={cert.officialUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200 text-xs transition"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </a>
+                        </div>
                       </td>
                     </tr>
                   );

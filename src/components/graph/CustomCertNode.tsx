@@ -86,14 +86,20 @@ export const CustomCertNode = memo((props: NodeProps) => {
   const primaryDomain = nodeData?.domains?.[0] || 'domain:networking';
   const domainInfo = domainStyles[primaryDomain] || domainStyles['domain:networking'];
   const costDisplay = nodeData?.currency === 'CAD' ? nodeData?.costDisplayCad : nodeData?.costDisplayUsd;
+  const isPhasingOut = nodeData?.status === 'BEING_REPLACED';
+  const isRetired = nodeData?.status === 'RETIRED';
 
   return (
     <div
-      className={`relative w-72 rounded-lg border border-l-4 bg-slate-900/98 p-3.5 shadow-xl transition-all duration-200 ${style.border} ${
-        selected ? 'ring-2 ring-sky-400 shadow-sky-950/50 scale-[1.02]' : ''
-      }`}
+      className={`relative w-72 rounded-lg border border-l-4 bg-slate-900/98 p-3.5 shadow-xl transition-all duration-200 ${
+        isRetired
+          ? 'opacity-65 border-dashed border-slate-700'
+          : isPhasingOut
+          ? 'border-amber-500/60 border-dashed'
+          : style.border
+      } ${selected ? 'ring-2 ring-sky-400 shadow-sky-950/50 scale-[1.02]' : ''}`}
       style={{
-        borderLeftColor: domainInfo.border,
+        borderLeftColor: isRetired ? '#64748b' : domainInfo.border,
         boxShadow: selected ? `0 0 22px ${style.glow}` : `0 4px 14px rgba(0, 0, 0, 0.45)`,
       }}
     >
@@ -127,7 +133,7 @@ export const CustomCertNode = memo((props: NodeProps) => {
 
       {/* Header with Domain Badge, Level & Score */}
       <div className="flex items-center justify-between gap-1.5 mb-2">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 flex-wrap">
           <span
             className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold tracking-tight uppercase ${domainInfo.bg} ${domainInfo.text} border border-current/20`}
           >
@@ -139,6 +145,16 @@ export const CustomCertNode = memo((props: NodeProps) => {
           >
             {style.label}
           </span>
+          {isPhasingOut && (
+            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-amber-950/90 text-amber-300 border border-amber-600/80 font-bold uppercase">
+              Phasing Out
+            </span>
+          )}
+          {isRetired && (
+            <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-slate-800 text-slate-400 border border-slate-700 font-bold uppercase">
+              Retired
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800 shrink-0">

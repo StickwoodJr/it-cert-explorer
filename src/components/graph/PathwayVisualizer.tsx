@@ -293,15 +293,24 @@ export default function PathwayVisualizer({
     });
 
     const rfEdges: Edge[] = filteredGraph.edges.map((edge) => {
-      let strokeColor = '#0ea5e9'; // required
+      let strokeColor = '#0284c7'; // required
       let strokeDasharray = undefined;
+      let strokeWidth = 2.5;
+      let labelTextColor = '#38bdf8';
+      let labelBorderColor = '#0369a1';
 
       if (edge.type === 'recommended') {
         strokeColor = '#10b981';
         strokeDasharray = '6 4';
+        strokeWidth = 2;
+        labelTextColor = '#34d399';
+        labelBorderColor = '#059669';
       } else if (edge.type === 'alternative') {
         strokeColor = '#f59e0b';
-        strokeDasharray = '2 2';
+        strokeDasharray = '3 3';
+        strokeWidth = 2;
+        labelTextColor = '#fbbf24';
+        labelBorderColor = '#d97706';
       }
 
       return {
@@ -313,12 +322,25 @@ export default function PathwayVisualizer({
         type: 'smoothstep',
         animated: edge.type === 'required',
         label: edge.label,
-        labelStyle: { fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' },
-        labelBgStyle: { fill: '#0f172a', fillOpacity: 0.85, rx: 4, ry: 4 },
-        labelBgPadding: [6, 4],
+        labelStyle: {
+          fill: labelTextColor,
+          fontSize: 10,
+          fontWeight: 700,
+          fontFamily: 'monospace',
+        },
+        labelBgStyle: {
+          fill: '#090d16',
+          fillOpacity: 0.96,
+          stroke: labelBorderColor,
+          strokeWidth: 1.5,
+          rx: 6,
+          ry: 6,
+        },
+        labelBgPadding: [8, 5] as [number, number],
+        labelBgBorderRadius: 6,
         style: {
           stroke: strokeColor,
-          strokeWidth: 2,
+          strokeWidth,
           strokeDasharray,
         },
         markerEnd: {

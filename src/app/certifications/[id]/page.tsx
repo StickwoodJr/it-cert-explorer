@@ -161,12 +161,6 @@ export default async function CertificationDetailPage({ params }: CertDetailPage
             <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
             <span className="font-mono text-sky-400 font-semibold">{cert.acronym}</span>
           </div>
-
-          <div className="flex items-center gap-3 text-xs">
-            <span className="font-mono text-slate-400">
-              USD/CAD: <strong className="text-emerald-400">${cadRate.toFixed(4)}</strong>
-            </span>
-          </div>
         </div>
       </header>
 

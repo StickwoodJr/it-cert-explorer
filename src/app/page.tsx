@@ -76,12 +76,6 @@ export default async function HomePage() {
               v1.0 Technical Release
             </span>
           </div>
-
-          <div className="flex items-center gap-4 text-xs">
-            <span className="font-mono text-slate-400">
-              Live Bank of Canada Forex: <strong className="text-emerald-400">${cadRate.toFixed(4)} CAD</strong>
-            </span>
-          </div>
         </div>
       </header>
 

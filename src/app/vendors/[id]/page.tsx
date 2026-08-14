@@ -137,12 +137,6 @@ export default async function VendorPage({ params }: VendorPageProps) {
             <span className="text-slate-600">/</span>
             <span className="text-xs font-semibold text-sky-400">{vendor.shortName}</span>
           </div>
-
-          <div className="flex items-center gap-3 text-xs">
-            <span className="font-mono text-slate-400">
-              USD/CAD: <strong className="text-emerald-400">${cadRate.toFixed(4)}</strong>
-            </span>
-          </div>
         </div>
       </header>
 
